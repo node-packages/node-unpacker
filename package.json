@@ -1,6 +1,6 @@
 {
   "name": "node-unpacker",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Simple unpacker for node",
   "main": "inflator.js",
   "directories": {
@@ -37,7 +37,8 @@
     "node-7z": "https://github.com/abaltra/node-7z",
     "node-uuid": "^1.4.3",
     "q": "^1.2.0",
-    "tarball-extract": "https://github.com/abaltra/tarball-extract/tarball/52fb622b360dc9d186c792e1dbbc53dd0800192f"
+    "tarball-extract": "https://github.com/abaltra/tarball-extract/tarball/52fb622b360dc9d186c792e1dbbc53dd0800192f",
+    "unrar": "git://github.com/abaltra/node-unrar"
   },
   "engines": {
     "node": ">=0.10"
