@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/abaltra/node-unpacker.git"
+    "url": "https://github.com/node-packages/node-unpacker.git"
   },
   "keywords": [
     "node",
@@ -25,13 +25,11 @@
   "author": "Alejandro Baltra <abaltra@gmail.com> (http://www.abaltra.info)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/abaltra/node-unpacker/issues"
+    "url": "https://github.com/node-packages/node-unpacker/issues"
   },
-  "homepage": "https://github.com/abaltra/node-unpacker",
+  "homepage": "https://github.com/node-packages/node-unpacker",
   "dependencies": {
     "async": "^0.9.0",
-    "chai": "^2.1.2",
-    "chai-as-promised": "^4.3.0",
     "fs.extra": "^1.3.2",
     "mocha": "^1.21.4",
     "node-7z": "https://github.com/abaltra/node-7z",
@@ -39,6 +37,10 @@
     "q": "^1.2.0",
     "tarball-extract": "https://github.com/abaltra/tarball-extract/tarball/52fb622b360dc9d186c792e1dbbc53dd0800192f",
     "unrar": "git://github.com/abaltra/node-unrar"
+  },
+  "devDependencies": {
+    "chai": "^2.1.2",
+    "chai-as-promised": "^4.3.0"
   },
   "engines": {
     "node": ">=0.10"

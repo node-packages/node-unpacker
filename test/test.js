@@ -3,7 +3,7 @@ var inflator = require('../inflator.js');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 var expect = chai.expect;
-var fs = require('fs.extra')
+var fs = require('fs.extra');
 var async = require('async');
 
 describe('Failed unpacks', function () {
