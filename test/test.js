@@ -1,438 +1,464 @@
-var assert = require('assert');
 var inflator = require('../inflator.js');
 var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
 var expect = chai.expect;
 var fs = require('fs.extra');
 var async = require('async');
 
 describe('Failed unpacks', function () {
 
-    beforeEach(function (done) {
-        fs.mkdir('test/inflated', function (err) {
-            done();
-        });
-    })
-
-    afterEach(function (done) {
-        fs.rmrf('test/inflated', function (err) {
-            done();
-        });
+  beforeEach(function (done) {
+    fs.mkdir('test/inflated', function (err) {
+      done(err);
     });
+  });
 
-    it('should fail on non existant file', function () {
-        return inflator.unpackFile('non_existant_file', 'test/inflated/', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-                expect(err).to.equal('Input file not found')
-            });
+  afterEach(function (done) {
+    fs.rmrf('test/inflated', function (err) {
+      done(err);
     });
+  });
 
-    it('should fail on unknow extension', function () {
-        return inflator.unpackFile('test/files/test.png', 'test/inflated/', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-                expect(err).to.equal('File type not supported');
-            });
-    });
+  it('should fail on non existant file', function () {
+    return inflator.unpackFile('non_existant_file', 'test/inflated/', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+        expect(err).to.equal('Input file not found');
+      });
+  });
 
-    it('should fail on missing output path', function () {
-        return inflator.unpackFile('test/files/zipped_files.zip', null, true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-                expect(err).to.equal('No output path given');
-            })
-    });
+  it('should fail on unknow extension', function () {
+    return inflator.unpackFile('test/files/test.png', 'test/inflated/', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+        expect(err).to.equal('File type not supported');
+      });
+  });
 
-    it('should fail without proper permissions', function () {
-        return inflator.unpackFile('test/files/zipped_files.zip', '/root/', true).then(
-            function (data) {
-            },
-            function (err) {
-                expect(err).to.exist;
-                expect(err).to.equal('Cannot write in output folder');
-            });
-    });
+  it('should fail on missing output path', function () {
+    return inflator.unpackFile('test/files/zipped_files.zip', null, true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+        expect(err).to.equal('No output path given');
+      });
+  });
+
+  it('should fail without proper permissions', function () {
+    return inflator.unpackFile('test/files/zipped_files.zip', '/root/', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+        expect(err).to.equal('Cannot write in output folder');
+      });
+  });
 
 
-    it('should fail on corrupted ZIP file', function () {
-        return inflator.unpackFile('test/files/corrupted.zip', 'test/inflated', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-            });
-    });
+  it('should fail on corrupted ZIP file', function () {
+    return inflator.unpackFile('test/files/corrupted.zip', 'test/inflated', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+      });
+  });
 
 
-    it('should fail on corrupted RAR file', function () {
-        return inflator.unpackFile('test/files/corrupted.rar', 'test/inflated', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-            });
-    });
-  
-    it('should fail on corrupted TAR.GZ file', function () {
-        return inflator.unpackFile('test/files/corrupted.tar.gz', 'test/inflated', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-            });
-    });
+  it('should fail on corrupted RAR file', function () {
+    return inflator.unpackFile('test/files/corrupted.rar', 'test/inflated', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+      });
+  });
 
-    it('should fail on corrupted TAR file', function () {
-        return inflator.unpackFile('test/files/corrupted.tar', 'test/inflated', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-            });
-    })
+  it('should fail on corrupted TAR.GZ file', function () {
+    return inflator.unpackFile('test/files/corrupted.tar.gz', 'test/inflated', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+      });
+  });
 
-    it('should fail on password protected ZIP file', function () {
-        return inflator.unpackFile('test/files/zipped_password.zip', 'test/inflated', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-            });
-    });
+  it('should fail on corrupted TAR file', function () {
+    return inflator.unpackFile('test/files/corrupted.tar', 'test/inflated', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+      });
+  });
 
-    it('should fail on password protected RAR file', function () {
-        return inflator.unpackFile('test/files/rared_pass_files.rar', 'test/inflated', true).then(
-            function (data) {},
-            function (err) {
-                expect(err).to.exist;
-            });
-    })
+  it('should fail on password protected ZIP file', function () {
+    return inflator.unpackFile('test/files/zipped_password.zip', 'test/inflated', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+      });
+  });
+
+  it('should fail on password protected RAR file', function () {
+    return inflator.unpackFile('test/files/rared_pass_files.rar', 'test/inflated', true).then(
+      function () {
+      },
+      function (err) {
+        expect(err).to.exist;
+      });
+  });
 });
 
 describe('Working unpacks', function () {
 
-    beforeEach(function (done) {
-        fs.mkdir('test/inflated', function (err) {
-            done();
+  beforeEach(function (done) {
+    fs.mkdir('test/inflated', function (err) {
+      done(err);
+    });
+  });
+
+  afterEach(function (done) {
+    fs.rmrf('test/inflated', function (err) {
+      done(err);
+    });
+  });
+
+  it('Unpack MACOSX packed ZIP file', function (done) {
+    return inflator.unpackFile('test/files/zip-small.zip', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
+
+        fs.readdir(data, function (err, files) {
+          expect(files.length).to.equal(6);
+          done();
         });
-    })
+      },
+      function () {
+      }
+    );
+  });
 
-    afterEach(function (done) {
-        fs.rmrf('test/inflated', function (err) {
+  it('Unpack ZIP file', function (done) {
+    return inflator.unpackFile('test/files/zipped_files.zip', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
+
+        async.waterfall(
+          [
+            function (callback) {
+              fs.readdir(data, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback(null, files[0]);
+              });
+            },
+            function (file, callback) {
+              fs.stat(data + '/' + file, function (err, stats) {
+                expect(stats.isDirectory()).to.equal(true);
+                callback(null, data + file);
+              });
+            },
+            function (path, callback) {
+              fs.readdir(path, function (err, files) {
+                expect(files.length).to.equal(5);
+                callback(null, files, path);
+              });
+            },
+            function (files, path, callback) {
+              var dirs = [];
+              var _files = [];
+
+              async.eachSeries(files,
+                function (file, cb) {
+                  fs.stat(path + '/' + file, function (error, stat) {
+                    if (stat.isDirectory()) dirs.push(path + '/' + file);
+                    else _files.push(path + '/' + file);
+                    cb();
+                  });
+                }, function () {
+                  expect(dirs.length).to.equal(1);
+                  expect(_files.length).to.equal(4);
+                  callback(null, dirs[0]);
+                });
+            },
+            function (dir, callback) {
+              fs.readdir(dir, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback();
+              });
+            }
+          ],
+          function () {
             done();
+          }
+        );
+      },
+      function () {
+      });
+  });
+
+  it('Unpack ZIPX file', function (done) {
+    this.timeout(30000);
+    return inflator.unpackFile('test/files/zipx_files.zipx', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
+
+        fs.readdir(data, function (err, files) {
+          expect(files.length).to.equal(2);
+          done();
         });
-    });
+      },
+      function () {
+      });
+  });
 
-    it('Unpack MACOSX packed ZIP file', function (done) {
-        return inflator.unpackFile('test/files/zip-small.zip', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
+  it('Unpack 7Z file', function (done) {
+    return inflator.unpackFile('test/files/7zipped.7z', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
 
-                fs.readdir(data, function (err, files) {
-                    expect(files.length).to.equal(6);
-                    done();
+        async.waterfall(
+          [
+            function (callback) {
+              fs.readdir(data, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback(null, files[0]);
+              });
+            },
+            function (file, callback) {
+              fs.stat(data + '/' + file, function (err, stats) {
+                expect(stats.isDirectory()).to.equal(true);
+                callback(null, data + file);
+              });
+            },
+            function (path, callback) {
+              fs.readdir(path, function (err, files) {
+                expect(files.length).to.equal(5);
+                callback(null, files, path);
+              });
+            },
+            function (files, path, callback) {
+              var dirs = [];
+              var _files = [];
+
+              async.eachSeries(files,
+                function (file, cb) {
+                  fs.stat(path + '/' + file, function (error, stat) {
+                    if (stat.isDirectory()) dirs.push(path + '/' + file);
+                    else _files.push(path + '/' + file);
+                    cb();
+                  });
+                }, function () {
+                  expect(dirs.length).to.equal(1);
+                  expect(_files.length).to.equal(4);
+                  callback(null, dirs[0]);
                 });
             },
-            function (err) {}   
+            function (dir, callback) {
+              fs.readdir(dir, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback();
+              });
+            }],
+          function (err) {
+            done(err);
+          }
         );
-    });
+      },
+      function () {
+      });
+  });
 
-    it('Unpack ZIP file', function (done) {
-        return inflator.unpackFile('test/files/zipped_files.zip', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
+  it('Unpack RAR file', function (done) {
+    return inflator.unpackFile('test/files/rared_files.rar', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
 
-                async.waterfall([
-                    function (callback) {
-                        fs.readdir(data, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback(null, files[0]);
-                        })
-                    },
-                    function (file, callback) {
-                        fs.stat(data + '/' + file, function (err, stats) {
-                            expect(stats.isDirectory()).to.equal(true);
-                            callback(null, data + file);
-                        });
-                    },
-                    function (path, callback) {
-                        fs.readdir(path, function (err, files) {
-                            expect(files.length).to.equal(5);
-                            callback(null, files, path);
-                        })
-                    },
-                    function (files, path, callback) {
-                        var dirs = [];
-                        var _files = [];
-
-                        async.eachSeries(files, 
-                            function (file, cb) {
-                                fs.stat(path + '/' + file, function (error, stat) {
-                                    if (stat.isDirectory()) dirs.push(path + '/' + file);
-                                    else _files.push(path + '/' + file);
-                                    cb();
-                                });
-                            }, function (err) {
-                                expect(dirs.length).to.equal(1);
-                                expect(_files.length).to.equal(4);
-                                callback(null, dirs[0]);
-                            })
-                    },
-                    function (dir, callback) {
-                        fs.readdir(dir, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback();
-                        });
-                    }], function (err, results){
-                        done();
-                    }
-                );       
+        async.waterfall(
+          [
+            function (callback) {
+              fs.readdir(data, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback(null, files[0]);
+              });
             },
-            function (err) {});
-    });
+            function (file, callback) {
+              fs.stat(data + '/' + file, function (err, stats) {
+                expect(stats.isDirectory()).to.equal(true);
+                callback(null, data + file);
+              });
+            },
+            function (path, callback) {
+              fs.readdir(path, function (err, files) {
+                expect(files.length).to.equal(5);
+                callback(null, files, path);
+              });
+            },
+            function (files, path, callback) {
+              var dirs = [];
+              var _files = [];
 
-    it('Unpack ZIPX file', function (done) {
-        this.timeout(30000);
-        return inflator.unpackFile('test/files/zipx_files.zipx', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
-
-                fs.readdir(data, function (err, files) {
-                    expect(files.length).to.equal(2);
-                    done();
+              async.eachSeries(files,
+                function (file, cb) {
+                  fs.stat(path + '/' + file, function (error, stat) {
+                    if (stat.isDirectory()) dirs.push(path + '/' + file);
+                    else _files.push(path + '/' + file);
+                    cb();
+                  });
+                }, function () {
+                  expect(dirs.length).to.equal(1);
+                  expect(_files.length).to.equal(4);
+                  callback(null, dirs[0]);
                 });
             },
-            function (err) {});
-    });
-
-    it('Unpack 7Z file', function (done) {
-        return inflator.unpackFile('test/files/7zipped.7z', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
-
-                async.waterfall([
-                    function (callback) {
-                        fs.readdir(data, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback(null, files[0]);
-                        })
-                    },
-                    function (file, callback) {
-                        fs.stat(data + '/' + file, function (err, stats) {
-                            expect(stats.isDirectory()).to.equal(true);
-                            callback(null, data + file);
-                        });
-                    },
-                    function (path, callback) {
-                        fs.readdir(path, function (err, files) {
-                            expect(files.length).to.equal(5);
-                            callback(null, files, path);
-                        })
-                    },
-                    function (files, path, callback) {
-                        var dirs = [];
-                        var _files = [];
-
-                        async.eachSeries(files, 
-                            function (file, cb) {
-                                fs.stat(path + '/' + file, function (error, stat) {
-                                    if (stat.isDirectory()) dirs.push(path + '/' + file);
-                                    else _files.push(path + '/' + file);
-                                    cb();
-                                });
-                            }, function (err) {
-                                expect(dirs.length).to.equal(1);
-                                expect(_files.length).to.equal(4);
-                                callback(null, dirs[0]);
-                            })
-                    },
-                    function (dir, callback) {
-                        fs.readdir(dir, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback();
-                        });
-                    }], function (err, results){
-                        done();
-                    }
-                );       
-            },
-            function (err) {});
-    });
-
-    it('Unpack RAR file', function (done) {
-        return inflator.unpackFile('test/files/rared_files.rar', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
-
-                async.waterfall([
-                    function (callback) {
-                        fs.readdir(data, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback(null, files[0]);
-                        })
-                    },
-                    function (file, callback) {
-                        fs.stat(data + '/' + file, function (err, stats) {
-                            expect(stats.isDirectory()).to.equal(true);
-                            callback(null, data + file);
-                        });
-                    },
-                    function (path, callback) {
-                        fs.readdir(path, function (err, files) {
-                            expect(files.length).to.equal(5);
-                            callback(null, files, path);
-                        })
-                    },
-                    function (files, path, callback) {
-                        var dirs = [];
-                        var _files = [];
-
-                        async.eachSeries(files, 
-                            function (file, cb) {
-                                fs.stat(path + '/' + file, function (error, stat) {
-                                    if (stat.isDirectory()) dirs.push(path + '/' + file);
-                                    else _files.push(path + '/' + file);
-                                    cb();
-                                });
-                            }, function (err) {
-                                expect(dirs.length).to.equal(1);
-                                expect(_files.length).to.equal(4);
-                                callback(null, dirs[0]);
-                            })
-                    },
-                    function (dir, callback) {
-                        fs.readdir(dir, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback();
-                        });
-                    }], function (err, results){
-                        done();
-                    }
-                );       
-            },
-            function (err) {});
-    });
-
-    it('Inflate GZ file', function (done) {
-        return inflator.unpackFile('test/files/gzed.png.gz', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
-                fs.readdir(data, function (err, files) {
-                    expect(files.length).to.equal(1);
-                    expect(files[0]).to.equal('gzed.png');
-                    done();
-                });
-            },
-            function (err) {}
+            function (dir, callback) {
+              fs.readdir(dir, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback();
+              });
+            }],
+          function (err) {
+            done(err);
+          }
         );
-    });
+      },
+      function () {
+      });
+  });
 
-    it('Unpack TAR file', function (done) {
-        return inflator.unpackFile('test/files/tared_files.tar', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
+  it('Inflate GZ file', function (done) {
+    return inflator.unpackFile('test/files/gzed.png.gz', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
+        fs.readdir(data, function (err, files) {
+          expect(files.length).to.equal(1);
+          expect(files[0]).to.equal('gzed.png');
+          done();
+        });
+      },
+      function () {
+      }
+    );
+  });
 
-                async.waterfall([
-                    function (callback) {
-                        fs.readdir(data, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback(null, files[0]);
-                        })
-                    },
-                    function (file, callback) {
-                        fs.stat(data + '/' + file, function (err, stats) {
-                            expect(stats.isDirectory()).to.equal(true);
-                            callback(null, data + file);
-                        });
-                    },
-                    function (path, callback) {
-                        fs.readdir(path, function (err, files) {
-                            expect(files.length).to.equal(5);
-                            callback(null, files, path);
-                        })
-                    },
-                    function (files, path, callback) {
-                        var dirs = [];
-                        var _files = [];
+  it('Unpack TAR file', function (done) {
+    return inflator.unpackFile('test/files/tared_files.tar', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
 
-                        async.eachSeries(files, 
-                            function (file, cb) {
-                                fs.stat(path + '/' + file, function (error, stat) {
-                                    if (stat.isDirectory()) dirs.push(path + '/' + file);
-                                    else _files.push(path + '/' + file);
-                                    cb();
-                                });
-                            }, function (err) {
-                                expect(dirs.length).to.equal(1);
-                                expect(_files.length).to.equal(4);
-                                callback(null, dirs[0]);
-                            })
-                    },
-                    function (dir, callback) {
-                        fs.readdir(dir, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback();
-                        });
-                    }], function (err, results){
-                        done();
-                    }
-                );       
+        async.waterfall(
+          [
+            function (callback) {
+              fs.readdir(data, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback(null, files[0]);
+              });
             },
-            function (err) {});
-    });
-
-    it('Unpack TAR.GZ file', function (done) {
-        return inflator.unpackFile('test/files/tar_gzd_files.tar.gz', 'test/inflated/', true).then(
-            function (data) {
-                expect(data).to.exist;
-
-                async.waterfall([
-                    function (callback) {
-                        fs.readdir(data, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback(null, files[0]);
-                        })
-                    },
-                    function (file, callback) {
-                        fs.stat(data + '/' + file, function (err, stats) {
-                            expect(stats.isDirectory()).to.equal(true);
-                            callback(null, data + file);
-                        });
-                    },
-                    function (path, callback) {
-                        fs.readdir(path, function (err, files) {
-                            expect(files.length).to.equal(5);
-                            callback(null, files, path);
-                        })
-                    },
-                    function (files, path, callback) {
-                        var dirs = [];
-                        var _files = [];
-
-                        async.eachSeries(files, 
-                            function (file, cb) {
-                                fs.stat(path + '/' + file, function (error, stat) {
-                                    if (stat.isDirectory()) dirs.push(path + '/' + file);
-                                    else _files.push(path + '/' + file);
-                                    cb();
-                                });
-                            }, function (err) {
-                                expect(dirs.length).to.equal(1);
-                                expect(_files.length).to.equal(4);
-                                callback(null, dirs[0]);
-                            })
-                    },
-                    function (dir, callback) {
-                        fs.readdir(dir, function (err, files) {
-                            expect(files.length).to.equal(1);
-                            callback();
-                        });
-                    }], function (err, results){
-                        done();
-                    }
-                );       
+            function (file, callback) {
+              fs.stat(data + '/' + file, function (err, stats) {
+                expect(stats.isDirectory()).to.equal(true);
+                callback(null, data + file);
+              });
             },
-            function (err) {});
-    });
+            function (path, callback) {
+              fs.readdir(path, function (err, files) {
+                expect(files.length).to.equal(5);
+                callback(null, files, path);
+              });
+            },
+            function (files, path, callback) {
+              var dirs = [];
+              var _files = [];
+
+              async.eachSeries(files,
+                function (file, cb) {
+                  fs.stat(path + '/' + file, function (error, stat) {
+                    if (stat.isDirectory()) dirs.push(path + '/' + file);
+                    else _files.push(path + '/' + file);
+                    cb();
+                  });
+                }, function () {
+                  expect(dirs.length).to.equal(1);
+                  expect(_files.length).to.equal(4);
+                  callback(null, dirs[0]);
+                });
+            },
+            function (dir, callback) {
+              fs.readdir(dir, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback();
+              });
+            }],
+          function (err) {
+            done(err);
+          }
+        );
+      },
+      function () {
+      });
+  });
+
+  it('Unpack TAR.GZ file', function (done) {
+    return inflator.unpackFile('test/files/tar_gzd_files.tar.gz', 'test/inflated/', true).then(
+      function (data) {
+        expect(data).to.exist;
+
+        async.waterfall(
+          [
+            function (callback) {
+              fs.readdir(data, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback(null, files[0]);
+              });
+            },
+            function (file, callback) {
+              fs.stat(data + '/' + file, function (err, stats) {
+                expect(stats.isDirectory()).to.equal(true);
+                callback(null, data + file);
+              });
+            },
+            function (path, callback) {
+              fs.readdir(path, function (err, files) {
+                expect(files.length).to.equal(5);
+                callback(null, files, path);
+              });
+            },
+            function (files, path, callback) {
+              var dirs = [];
+              var _files = [];
+
+              async.eachSeries(files,
+                function (file, cb) {
+                  fs.stat(path + '/' + file, function (error, stat) {
+                    if (stat.isDirectory()) dirs.push(path + '/' + file);
+                    else _files.push(path + '/' + file);
+                    cb();
+                  });
+                }, function () {
+                  expect(dirs.length).to.equal(1);
+                  expect(_files.length).to.equal(4);
+                  callback(null, dirs[0]);
+                });
+            },
+            function (dir, callback) {
+              fs.readdir(dir, function (err, files) {
+                expect(files.length).to.equal(1);
+                callback();
+              });
+            }],
+          function (err) {
+            done(err);
+          }
+        );
+      },
+      function () {
+      });
+  });
 });
 
 
